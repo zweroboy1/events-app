@@ -14,8 +14,9 @@ import { EventsModule } from './events/events.module';
       useClass: TypeOrmConfigService,
     }),
 
-    EventsModule],
+    EventsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

@@ -7,7 +7,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 const configService = new ConfigService();
 
-
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,

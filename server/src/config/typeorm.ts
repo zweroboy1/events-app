@@ -5,7 +5,7 @@ import { dataSourceOptions } from './data-source';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor() { }
+  constructor() {}
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return dataSourceOptions;
   }
