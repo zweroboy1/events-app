@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   CreateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Event } from '../../events/entities/event.entity';
@@ -24,8 +25,17 @@ export class Registration {
   id: number;
 
   @ManyToOne(() => Event, (event) => event.registrations)
+  @JoinColumn({ name: 'eventId' })
   @ApiProperty({ example: 1, description: 'ID of the registered event' })
   event: Event;
+
+  @ApiProperty({
+    example: 1,
+    description: 'ID of the registered event',
+    type: Number,
+  })
+  @Column()
+  eventId: number;
 
   @Column()
   @ApiProperty({

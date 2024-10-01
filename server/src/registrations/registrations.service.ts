@@ -1,11 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
-import { UpdateRegistrationDto } from './dto/update-registration.dto';
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Registration } from './entities/registration.entity';
+import { Event } from '../events/entities/event.entity';
 @Injectable()
 export class RegistrationsService {
-  create(createRegistrationDto: CreateRegistrationDto) {
-    return 'This action adds a new registration';
+  constructor(
+    @InjectRepository(Registration)
+    private readonly registrationRepository: Repository<Registration>,
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>
+  ) {}
+
+  async create(
+    createRegistrationDto: CreateRegistrationDto
+  ): Promise<Registration> {
+    const { eventId } = createRegistrationDto;
+
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+    if (!event) {
+      throw new BadRequestException(`Event with ID ${eventId} does not exist`);
+    }
+
+    if (event.eventDate < new Date()) {
+      throw new BadRequestException(
+        `Event with ID ${eventId} has already started or finished`
+      );
+    }
+
+    const registration = this.registrationRepository.create(
+      createRegistrationDto
+    );
+    return this.registrationRepository.save(registration);
   }
 
   findAll() {
@@ -15,11 +44,6 @@ export class RegistrationsService {
   findOne(id: number) {
     return `This action returns a #${id} registration`;
   }
-
-  update(id: number, updateRegistrationDto: UpdateRegistrationDto) {
-    return `This action updates a #${id} registration`;
-  }
-
   remove(id: number) {
     return `This action removes a #${id} registration`;
   }

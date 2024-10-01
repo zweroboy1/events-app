@@ -1,20 +1,22 @@
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+  ApiTags,
+  ApiResponse,
+  ApiCreatedResponse,
+  ApiBody,
+} from '@nestjs/swagger';
+
 import { RegistrationsService } from './registrations.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
-import { UpdateRegistrationDto } from './dto/update-registration.dto';
 
+@ApiTags('registrations')
 @Controller('registrations')
 export class RegistrationsController {
   constructor(private readonly registrationsService: RegistrationsService) {}
 
+  @ApiCreatedResponse({ description: 'Registration created successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid input.' })
+  @ApiBody({ type: CreateRegistrationDto })
   @Post()
   create(@Body() createRegistrationDto: CreateRegistrationDto) {
     return this.registrationsService.create(createRegistrationDto);
@@ -28,14 +30,6 @@ export class RegistrationsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.registrationsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateRegistrationDto: UpdateRegistrationDto
-  ) {
-    return this.registrationsService.update(+id, updateRegistrationDto);
   }
 
   @Delete(':id')
