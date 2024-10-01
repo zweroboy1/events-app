@@ -10,8 +10,12 @@ export class EventsService {
     private eventRepository: Repository<Event>
   ) {}
 
-  findAll(): Promise<Event[]> {
-    return this.eventRepository.find();
+  async findAll(page: number = 1, limit: number = 12): Promise<{ events: Event[], count: number }> {
+    const result = await this.eventRepository.findAndCount({
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+    return { events: result[0], count: result[1] };
   }
 
   findOne(id: number): Promise<Event> {
