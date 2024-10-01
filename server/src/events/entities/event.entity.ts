@@ -1,5 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+
 import { ApiProperty } from '@nestjs/swagger';
+
+import { Registration } from '../../registrations/entities/registration.entity';
 
 @Entity({ name: 'events' })
 export class Event {
@@ -25,4 +28,7 @@ export class Event {
   @Column()
   @ApiProperty({ example: 'John Doe', description: 'Organizer of the event' })
   organizer: string;
+
+  @OneToMany(() => Registration, (registration) => registration.event)
+  registrations: Registration[];
 }
