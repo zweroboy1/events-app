@@ -1,12 +1,19 @@
+import { Route, Routes } from 'react-router-dom';
+
 import { Events } from './components/Events/Events';
+import { Register } from './components/Register/Register';
+import { View } from './components/View/View';
+
 import './App.css';
 
 function App() {
   return (
     <div>
-      <h1 className="text-center mb-3">Events</h1>
-
-      <Events />
+      <Routes>
+        <Route path="/" element={<Events />} />
+        <Route path="/register/:id" element={<Register />} />
+        <Route path="/view/:id" element={<View />} />
+      </Routes>
     </div>
   );
 }

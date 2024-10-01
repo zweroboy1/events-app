@@ -15,14 +15,17 @@ export const Events: React.FC = () => {
 
   if (isUninitialized || isLoading || isFetching) {
     return (
-      <Container
-        fluid
-        className="d-flex justify-content-center align-items-center vh-50"
-      >
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </Container>
+      <>
+        <h1 className="text-center mb-3">Events</h1>
+        <Container
+          fluid
+          className="d-flex justify-content-center align-items-center vh-50"
+        >
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </Container>
+      </>
     );
   }
 
@@ -32,13 +35,16 @@ export const Events: React.FC = () => {
   }
 
   return (
-    <Container fluid className="h-100">
-      <Row className="gx-4 gy-4">
-        {events.length === 0 && <div>No events</div>}
-        {events.map((event) => (
-          <Event key={event.id} {...event} />
-        ))}
-      </Row>
-    </Container>
+    <>
+      <h1 className="text-center mb-3">Events</h1>
+      <Container fluid className="h-100">
+        <Row className="gx-4 gy-4">
+          {events.length === 0 && <div>No events</div>}
+          {events.map((event) => (
+            <Event key={event.id} {...event} />
+          ))}
+        </Row>
+      </Container>
+    </>
   );
 };
