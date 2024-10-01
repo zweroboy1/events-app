@@ -4,7 +4,7 @@ import {
   fetchBaseQuery,
 } from '@reduxjs/toolkit/query/react';
 import { BASE_URL } from '../../constants';
-import { IEvent } from '../../types';
+import { IEventResponse } from '../../types';
 
 interface ErrorResponse {
   message: string | string[];
@@ -12,8 +12,6 @@ interface ErrorResponse {
   statusCode: number;
   timestamp?: string;
 }
-
-console.log(BASE_URL);
 
 const getServerErrorMessage = (response: FetchBaseQueryError): Error => {
   let message = 'Server error';
@@ -35,57 +33,13 @@ export const eventsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   tagTypes: ['Events'],
   endpoints: (builder) => ({
-    getEvents: builder.query<IEvent[], void>({
-      query: () => 'events',
-      transformResponse: (response: IEvent[]) => {
-        return response;
-      },
+    getEvents: builder.query<IEventResponse, { page: number }>({
+      query: ({ page }) => `events?page=${page}`,
       transformErrorResponse: (response: FetchBaseQueryError): Error => {
         return getServerErrorMessage(response);
       },
       providesTags: ['Events'],
     }),
-    /*
-    addList: builder.mutation<List, string>({
-      query: (name) => ({
-        url: 'lists',
-        method: 'POST',
-        body: { name },
-      }),
-      transformResponse: (response: List) => {
-        return response;
-      },
-      transformErrorResponse: (response: FetchBaseQueryError) => {
-        return getServerErrorMessage(response);
-      },
-      invalidatesTags: ['List'],
-    }),
-
-    deleteList: builder.mutation<null, number>({
-      query: (id) => ({
-        url: `lists/${id}`,
-        method: 'DELETE',
-      }),
-      transformErrorResponse: (response: FetchBaseQueryError) => {
-        return getServerErrorMessage(response);
-      },
-      invalidatesTags: ['List'],
-    }),
-
-    updateList: builder.mutation<Event, { id: number; name: string }>({
-      query: (list) => ({
-        url: `lists/${list.id}`,
-        method: 'PATCH',
-        body: { name: list.name },
-      }),
-      transformResponse: (response: List) => {
-        return response;
-      },
-      transformErrorResponse: (response: FetchBaseQueryError) => {
-        return getServerErrorMessage(response);
-      },
-      invalidatesTags: ['List'],
-    }), */
   }),
 });
 

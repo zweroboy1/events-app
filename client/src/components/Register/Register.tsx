@@ -27,21 +27,21 @@ export const Register: React.FC = () => {
         <Form.Group className="mb-3 text-start">
           <Form.Label>Where did you hear about this event?</Form.Label>
           <div className="mt-2 d-flex flex-row gap-3">
-            <Form.Check 
+            <Form.Check
               type="radio"
               id="socialMedia"
               name="source"
               label="Social media"
               value="socialMedia"
             />
-            <Form.Check 
+            <Form.Check
               type="radio"
               id="friends"
               name="source"
               label="Friends"
               value="friends"
             />
-            <Form.Check 
+            <Form.Check
               type="radio"
               id="foundMyself"
               name="source"

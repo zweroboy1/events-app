@@ -5,3 +5,8 @@ export interface IEvent {
   eventDate: Date;
   organizer: string;
 }
+
+export interface IEventResponse {
+  events: IEvent[];
+  count: number;
+}
