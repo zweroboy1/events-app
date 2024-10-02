@@ -16,7 +16,7 @@ import { Registration } from './entities/registration.entity';
 @ApiTags('registrations')
 @Controller('registrations')
 export class RegistrationsController {
-  constructor(private readonly registrationsService: RegistrationsService) { }
+  constructor(private readonly registrationsService: RegistrationsService) {}
 
   @ApiCreatedResponse({ description: 'Registration created successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid input.' })
@@ -46,11 +46,16 @@ export class RegistrationsController {
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiResponse({ status: 404, description: 'Event not found.' })
-  async findOne(@Query('page') page: number = 1,
+  async findOne(
+    @Query('page') page: number = 1,
     @Query('limit') limit: number = 8,
-    @Param('id') id: string): Promise<{ users: Registration[]; count: number }> {
-    const participants = await this.registrationsService.findOne(+id, page, limit);
+    @Param('id') id: string
+  ): Promise<{ users: Registration[]; count: number }> {
+    const participants = await this.registrationsService.findOne(
+      +id,
+      page,
+      limit
+    );
     return participants;
   }
-
 }

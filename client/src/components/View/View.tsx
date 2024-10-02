@@ -24,15 +24,14 @@ export const View: React.FC = () => {
     return <h1>{errorFromServer?.message}</h1>;
   }
   if (isSuccess) {
+    return (
+      <Container className="mt-4">
+        <h1>"{event?.title || ''}" participants</h1>
 
-  return (
-    <Container className="mt-4">
-      <h1>"{event?.title || ''}" participants</h1>
-
-      <div className="mt-5">
+        <div className="mt-5">
           <Link to={`/`}>To main page</Link>
         </div>
-    </Container>
-  );
-}
+      </Container>
+    );
+  }
 };

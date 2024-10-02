@@ -15,7 +15,7 @@ export class RegistrationsService {
     private readonly registrationRepository: Repository<Registration>,
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>
-  ) { }
+  ) {}
 
   async create(
     createRegistrationDto: CreateRegistrationDto
@@ -53,7 +53,8 @@ export class RegistrationsService {
   async findOne(
     eventId: number,
     page: number = 1,
-    limit: number = 8,): Promise<{ users: Registration[]; count: number }> {
+    limit: number = 8
+  ): Promise<{ users: Registration[]; count: number }> {
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
     });
