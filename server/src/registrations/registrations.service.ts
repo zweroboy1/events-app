@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -35,7 +39,9 @@ export class RegistrationsService {
       where: { event: { id: eventId }, email },
     });
     if (existingRegistration) {
-      throw new BadRequestException(`User with email ${email} is already registered for event with ID ${eventId}`);
+      throw new BadRequestException(
+        `User with email ${email} is already registered for event with ID ${eventId}`
+      );
     }
 
     const registration = this.registrationRepository.create(
@@ -44,14 +50,24 @@ export class RegistrationsService {
     return this.registrationRepository.save(registration);
   }
 
-  findAll() {
-    return `This action returns all registrations`;
-  }
+  async findOne(
+    eventId: number,
+    page: number = 1,
+    limit: number = 8,): Promise<{ users: Registration[]; count: number }> {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+    if (!event) {
+      throw new NotFoundException(`Event with ID ${eventId} not found`);
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} registration`;
-  }
-  remove(id: number) {
-    return `This action removes a #${id} registration`;
+    const result = await this.registrationRepository.findAndCount({
+      where: { event: { id: eventId } },
+      order: { id: 'DESC' },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    return { users: result[0], count: result[1] };
   }
 }

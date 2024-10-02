@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 @ApiTags('events')
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventService: EventsService) { }
+  constructor(private readonly eventService: EventsService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all events' })
@@ -19,21 +19,21 @@ export class EventsController {
         events: {
           type: 'array',
           items: {
-            $ref: '#/components/schemas/Event'
-          }
+            $ref: '#/components/schemas/Event',
+          },
         },
         count: {
-          type: 'integer'
-        }
-      }
-    }
+          type: 'integer',
+        },
+      },
+    },
   })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 12
-  ): Promise<{ events: Event[], count: number }> {
+  ): Promise<{ events: Event[]; count: number }> {
     const eventsResult = await this.eventService.findAll(page, limit);
     return eventsResult;
   }
