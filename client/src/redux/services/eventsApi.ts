@@ -4,7 +4,7 @@ import {
   fetchBaseQuery,
 } from '@reduxjs/toolkit/query/react';
 import { BASE_URL } from '../../constants';
-import { IEventResponse } from '../../types';
+import { IEvent, IEventResponse } from '../../types';
 
 interface ErrorResponse {
   message: string | string[];
@@ -25,7 +25,7 @@ interface IRegistrationResponse {
   id: number;
 }
 
-const getServerErrorMessage = (response: FetchBaseQueryError): Error => {
+export const getServerErrorMessage = (response: FetchBaseQueryError): Error => {
   let message = 'Server error';
   if ('data' in response && response.data) {
     const errorResponse = response.data as ErrorResponse;
@@ -53,7 +53,14 @@ export const eventsApi = createApi({
       providesTags: ['Events'],
     }),
 
-    createRegistration: builder.mutation<IRegistrationResponse, IRegistrationRequest>({
+    getEvent: builder.query<IEvent, number>({
+      query: (id) => `events/${id}`,
+    }),
+
+    createRegistration: builder.mutation<
+      IRegistrationResponse,
+      IRegistrationRequest
+    >({
       query: (body) => ({
         url: 'registrations',
         method: 'POST',
@@ -66,4 +73,8 @@ export const eventsApi = createApi({
   }),
 });
 
-export const { useGetEventsQuery, useCreateRegistrationMutation } = eventsApi;
+export const {
+  useGetEventsQuery,
+  useGetEventQuery,
+  useCreateRegistrationMutation,
+} = eventsApi;

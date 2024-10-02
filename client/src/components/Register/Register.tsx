@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { parseISO, subYears } from 'date-fns';
 
-import { useCreateRegistrationMutation } from '../../redux/services/eventsApi';
+import {
+  getServerErrorMessage,
+  useCreateRegistrationMutation,
+  useGetEventQuery,
+} from '../../redux/services/eventsApi';
 import { useToast } from '../../context/useToast';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 interface RegisterFormValues {
   fullName: string;
@@ -17,14 +22,15 @@ interface RegisterFormValues {
 }
 
 export const Register: React.FC = () => {
-  const { id } = useParams<{ id: string }>();  
+  const { id } = useParams<{ id: string }>();
   const [createRegistration] = useCreateRegistrationMutation();
+
+  const { data: event, error: eventError, isSuccess } = useGetEventQuery(Number(id));
 
   const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [inactive, setInactive] = useState(false);
-
 
   const schema = yup.object().shape({
     fullName: yup
@@ -52,7 +58,7 @@ export const Register: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
     defaultValues: {
       fullName: '',
@@ -65,7 +71,10 @@ export const Register: React.FC = () => {
 
   const onSubmit = async (data: RegisterFormValues) => {
     try {
-      const response = await createRegistration({ eventId: Number(id), ...data });
+      const response = await createRegistration({
+        eventId: Number(id),
+        ...data,
+      });
       if ('error' in response) {
         const errorResponse = response.error as Error;
         throw new Error(errorResponse.message);
@@ -81,9 +90,15 @@ export const Register: React.FC = () => {
     }
   };
 
+
+  if (eventError) {
+    const errorFromServer = getServerErrorMessage(eventError as FetchBaseQueryError);
+    return <h1>{errorFromServer?.message}</h1>;
+  }
+ if (isSuccess) {
   return (
-    <Container className="mt-4">
-      <h1 className="mb-4">Register for Event ID: {id}</h1>
+    <Container className="mt-4">      
+      <h1 className="mb-4">Register for {event?.title || ''}</h1>
       <Form className="text-start" onSubmit={handleSubmit(onSubmit)}>
         <Form.Group
           className="mb-4 text-start position-relative"
@@ -201,10 +216,19 @@ export const Register: React.FC = () => {
           </div>
         </Form.Group>
 
-        <Button variant="dark" disabled={!isValid || isSubmitting || inactive } className="mt-3" type="submit">
+        <Button
+          variant="dark"
+          disabled={isSubmitting || inactive}
+          className="mt-3"
+          type="submit"
+        >
           Register
         </Button>
       </Form>
+      <div className="mt-5">
+       <Link to={`/`} >To main page</Link> 
+      </div>
+      
     </Container>
   );
-};
+}};

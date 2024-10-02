@@ -41,8 +41,10 @@ export class EventsController {
   @Get(':id')
   @ApiOperation({ summary: 'Get an event by ID' })
   @ApiResponse({ status: 200, description: 'Return event by ID.', type: Event })
-  findOne(@Param('id') id: number): Promise<Event> {
-    return this.eventService.findOne(id);
+  @ApiResponse({ status: 404, description: 'Event not found.' })
+  async findOne(@Param('id') id: number): Promise<Event> {
+    const event = await this.eventService.findOne(id);
+    return event;
   }
 
   @Post()
