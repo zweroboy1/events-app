@@ -102,8 +102,8 @@ export const Register: React.FC = () => {
   }
   if (isSuccess) {
     return (
-      <Container className="mt-4">
-        <h1 className="mb-4">Register for {event?.title || ''}</h1>
+      <Container className="mt-4" style={{ maxWidth: '600px' }}>
+        <h1 className="mb-4">Register to "{event?.title || ''}"</h1>
         <Form className="text-start" onSubmit={handleSubmit(onSubmit)}>
           <Form.Group
             className="mb-4 text-start position-relative"

@@ -8,13 +8,11 @@ import './App.css';
 
 function App() {
   return (
-    <div>
-      <Routes>
-        <Route path="/" element={<Events />} />
-        <Route path="/register/:id" element={<Register />} />
-        <Route path="/view/:id" element={<View />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<Events />} />
+      <Route path="/register/:id" element={<Register />} />
+      <Route path="/view/:id" element={<View />} />
+    </Routes>
   );
 }
 
