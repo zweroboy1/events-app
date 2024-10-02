@@ -1,10 +1,13 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { parseISO, subYears } from 'date-fns';
+
+import { useCreateRegistrationMutation } from '../../redux/services/eventsApi';
+import { useToast } from '../../context/useToast';
 
 interface RegisterFormValues {
   fullName: string;
@@ -14,7 +17,14 @@ interface RegisterFormValues {
 }
 
 export const Register: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();  
+  const [createRegistration] = useCreateRegistrationMutation();
+
+  const { showToast } = useToast();
+  const navigate = useNavigate();
+
+  const [inactive, setInactive] = useState(false);
+
 
   const schema = yup.object().shape({
     fullName: yup
@@ -42,7 +52,7 @@ export const Register: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<RegisterFormValues>({
     defaultValues: {
       fullName: '',
@@ -53,8 +63,22 @@ export const Register: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: RegisterFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: RegisterFormValues) => {
+    try {
+      const response = await createRegistration({ eventId: Number(id), ...data });
+      if ('error' in response) {
+        const errorResponse = response.error as Error;
+        throw new Error(errorResponse.message);
+      }
+      showToast('success', `Your registration was successful!`);
+      setInactive(true);
+      setTimeout(() => {
+        navigate('/view/' + id);
+      }, 3000);
+    } catch (err: unknown) {
+      const itemError = err as Error;
+      showToast('error', itemError.message);
+    }
   };
 
   return (
@@ -177,7 +201,7 @@ export const Register: React.FC = () => {
           </div>
         </Form.Group>
 
-        <Button variant="dark" className="mt-3" type="submit">
+        <Button variant="dark" disabled={!isValid || isSubmitting || inactive } className="mt-3" type="submit">
           Register
         </Button>
       </Form>

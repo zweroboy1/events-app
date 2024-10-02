@@ -13,6 +13,18 @@ interface ErrorResponse {
   timestamp?: string;
 }
 
+interface IRegistrationRequest {
+  fullName: string;
+  email: string;
+  dateOfBirth: string;
+  source: string;
+  eventId: number;
+}
+
+interface IRegistrationResponse {
+  id: number;
+}
+
 const getServerErrorMessage = (response: FetchBaseQueryError): Error => {
   let message = 'Server error';
   if ('data' in response && response.data) {
@@ -40,7 +52,18 @@ export const eventsApi = createApi({
       },
       providesTags: ['Events'],
     }),
+
+    createRegistration: builder.mutation<IRegistrationResponse, IRegistrationRequest>({
+      query: (body) => ({
+        url: 'registrations',
+        method: 'POST',
+        body,
+      }),
+      transformErrorResponse: (response: FetchBaseQueryError): Error => {
+        return getServerErrorMessage(response);
+      },
+    }),
   }),
 });
 
-export const { useGetEventsQuery } = eventsApi;
+export const { useGetEventsQuery, useCreateRegistrationMutation } = eventsApi;

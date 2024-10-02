@@ -11,12 +11,12 @@ export class RegistrationsService {
     private readonly registrationRepository: Repository<Registration>,
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>
-  ) {}
+  ) { }
 
   async create(
     createRegistrationDto: CreateRegistrationDto
   ): Promise<Registration> {
-    const { eventId } = createRegistrationDto;
+    const { eventId, email } = createRegistrationDto;
 
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
@@ -29,6 +29,13 @@ export class RegistrationsService {
       throw new BadRequestException(
         `Event with ID ${eventId} has already started or finished`
       );
+    }
+
+    const existingRegistration = await this.registrationRepository.findOne({
+      where: { event: { id: eventId }, email },
+    });
+    if (existingRegistration) {
+      throw new BadRequestException(`User with email ${email} is already registered for event with ID ${eventId}`);
     }
 
     const registration = this.registrationRepository.create(

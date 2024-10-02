@@ -10,9 +10,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Event } from '../../events/entities/event.entity';
 
 export enum RegistrationSource {
-  SOCIAL_MEDIA = 'Social media',
-  FRIENDS = 'Friends',
-  FOUND_MYSELF = 'Found myself',
+  SOCIAL_MEDIA = 'socialMedia',
+  FRIENDS = 'friends',
+  FOUND_MYSELF = 'foundMyself',
 }
 
 @Entity({ name: 'registrations' })
